@@ -1,4 +1,3 @@
-//Aim:Write a code to Update a product using Patch Request and  to delete a product using DELETE request
 
 const fs = require('fs');
 const express = require('express');
@@ -20,6 +19,26 @@ const product = JSON.parse(
 router.patch('/api/v1/product/:id', (req, res) => {
   try {
     //Write your code here
+    const id = req.params.id;
+    const productIndex = product.findIndex((p) => p.id == id);
+    if (productIndex === -1) {
+      return res.status(404).json({
+        message: 'Product Not Found',
+        status: 'Error',
+      });
+    }
+    product[productIndex] = Object.assign(product[productIndex], req.body);
+    fs.writeFileSync(
+      `${__dirname}/../dev-data/product.json`,
+      JSON.stringify(product)
+    );
+    return res.status(201).json({
+      message: 'success',
+      data: {
+        product,
+      },
+    });
+    
   } catch (error) {
     console.log(error);
     res.status(400).json({
@@ -33,6 +52,26 @@ router.patch('/api/v1/product/:id', (req, res) => {
 router.delete('/api/v1/product/:id', (req, res) => {
   try {
     //Write your code here
+     const id = req.params.id;
+    const productIndex = product.findIndex((p) => p.id == id);
+    if (productIndex === -1) {
+      return res.status(404).json({
+        message: 'Product Not Found',
+        status: 'Error',
+      });
+    }
+    product.splice(productIndex, 1);
+    fs.writeFileSync(
+      `${__dirname}/../dev-data/product.json`,
+      JSON.stringify(product)
+    );
+    return res.status(201).json({
+      status: 'success',
+      data: {
+        product,
+      },
+    });
+    
   } catch (error) {
     console.log(error);
     res.status(400).json({
